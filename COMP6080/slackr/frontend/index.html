@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Slackr</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" media="screen" href="styles/provided.css" />
+  <script type="module" src="src/helpers.js"></script>
+</head>
+
+<body>
+
+  <main role="main">
+    <!-- login -->
+    <div id="page-login" class="page page-hide">
+      <section class="py-5">
+        <div class="container col-xxl-8 px-4 py-5">
+          <div class="row g-5 align-items-center">
+            <div class="col-lg-6">
+              <h1 class="display-4 fw-bold lh-1 mb-3">Welcome to Slackr</h1>
+              <p class="lead text-body-secondary" id="disable-small-media">
+                A lightweight messaging hub for UNSW students to chat, collaborate, and share ideas — all without
+                leaving the campus network.
+                Built for teamwork. Inspired by Slack. Powered by pure determination (and JavaScript).
+              </p>
+            </div>
+
+            <div class="col-12 col-lg-5">
+              <form id="login-form" class="p-4 p-md-5 border rounded-3 bg-body-tertiary needs-validation" novalidate>
+                <div class="form-floating mb-3">
+                  <input type="email" class="form-control" id="login-email" placeholder="name@example.com" required>
+                  <label for="email">Email address</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                  <input type="password" class="form-control" id="login-password" placeholder="Password" required>
+                  <label for="password">Password</label>
+                </div>
+
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" value="" id="remember">
+                  <label class="form-check-label" for="remember">Remember me</label>
+                </div>
+
+                <button class="w-100 btn btn-lg btn-primary" type="submit" id="login-submit">Log in</button>
+
+                <hr class="my-4">
+                <p class="text-center small mt-2 mb-0">
+                  <span class="text-body-secondary">Don’t have an account?</span>
+                  <a href="#" class="link-primary fw-semibold text-decoration-none" id="register-link">
+                    Create account
+                  </a>
+                </p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- register -->
+    <div id="page-register" class="page page-hide">
+      <section class="py-5">
+        <div class="container col-xxl-8 px-4 py-5">
+          <div class="row g-5 align-items-center">
+            <div class="col-lg-6">
+              <h1 class="display-4 fw-bold lh-1 mb-3">Create your account</h1>
+              <p class="lead text-body-secondary" id="disable-small-media">
+                Join Slackr to collaborate with classmates, share ideas, and stay connected —
+                all inside the campus network. It’s fast, simple, and built in pure JavaScript.
+              </p>
+            </div>
+
+            <div class="col-12 col-lg-5">
+              <form id="register-form" class="p-4 p-md-5 border rounded-3 bg-body-tertiary needs-validation" novalidate>
+                <div class="form-floating mb-3">
+                  <input id="register-name" class="form-control" type="text" placeholder="Your name" required
+                    minlength="2" />
+                  <label for="reg-name">Name</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                  <input id="register-email" class="form-control" type="email" placeholder="name@example.com"
+                    required />
+                  <label for="reg-email">Email address</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                  <input id="register-password" class="form-control" type="password" placeholder="Password" required
+                    minlength="6" />
+                  <label for="reg-pass">Password</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                  <input id="register-password-confirm" class="form-control" type="password"
+                    placeholder="Confirm password" required minlength="6" />
+                  <label for="reg-pass2">Confirm password</label>
+                </div>
+
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" id="reg-remember" />
+                  <label class="form-check-label" for="reg-remember">Remember me</label>
+                </div>
+
+                <button id="register-submit" type="submit" class="w-100 btn btn-lg btn-primary">Create account</button>
+
+                <hr class="my-4">
+                <p class="text-center small mt-2 mb-0">
+                  <span class="text-body-secondary">Already have an account?</span>
+                  <a href="#" class="link-primary fw-semibold text-decoration-none" id="login-link">
+                    Log in
+                  </a>
+                </p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Error</h5>
+            <button id="error-close" type="button" class="btn-close" data-bs-dismiss="modal"
+              aria-label="Close"></button>
+          </div>
+          <div id="error-body" class="modal-body text-danger"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Message Modal -->
+    <div class="modal fade" id="editMessageModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit message</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <textarea id="edit-message-input" class="form-control" rows="4"
+              placeholder="Edit your message..."></textarea>
+          </div>
+          <div class="modal-footer">
+            <button id="edit-message-save" type="button" class="btn btn-primary">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- dashboard -->
+    <div id="page-dashboard" class="page page-hide">
+      <!-- Header -->
+      <header class="navbar navbar-dark sticky-top bg-purple flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-nowrap" href="#">
+          Slackr
+          <span id="offline-chip" class="badge rounded-pill bg-warning text-dark ms-2 align-middle d-none">
+            offline
+          </span>
+          <button class="btn btn-sm btn-light ms-2 d-md-none" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#channelsDrawer" aria-controls="channelsDrawer">
+            ☰
+          </button>
+        </a>
+      </header>
+
+      <div id="dashboard-container" class="container-fluid">
+        <div class="row">
+          <!-- Sidebar -->
+          <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse show"
+            style="min-height:100vh; border-right:1px solid #eee;">
+            <div class="position-sticky pt-3 d-flex flex-column h-100">
+              <div class="w-100">
+                <ul class="nav flex-column px-3">
+                  <li class="nav-item">
+                    <a id="create-channel-button" href="#" class="nav-link py-2 rounded sidebar-action"
+                      data-bs-toggle="modal" data-bs-target="#create-channel-container">
+                      + Create channel
+                    </a>
+                  </li>
+                </ul>
+                <hr class="my-3">
+              </div>
+
+              <!-- public + private channels list -->
+              <ul id="channel-list" class="nav flex-column px-3 mb-3"></ul>
+
+              <!-- btm sidebar -->
+              <div class="w-100">
+                <hr class="my-3">
+                <ul class="nav flex-column px-3">
+                  <!-- my profile -->
+                  <li class="nav-item">
+                    <div id="avatar-label" class="d-flex align-items-center px-3 py-2 gap-2" style="cursor:pointer;">
+                      <img id="avatar-image" src="" alt="me" width="32" height="32"
+                        class="rounded-circle flex-shrink-0">
+                      <div class="small">
+                        <div id="avatar-name" class="fw-semibold">Me</div>
+                        <div id="avatar-email" class="text-muted"></div>
+                      </div>
+                    </div>
+                  </li>
+                  <!-- sign out-->
+                  <li class="nav-item">
+                    <a href="#" class="nav-link py-2" id="logout-button">Sign out</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+
+          <!-- Mobile channels drawer -->
+          <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="channelsDrawer"
+            aria-labelledby="channelsDrawerLabel">
+            <div class="offcanvas-header">
+              <h5 class="offcanvas-title" id="channelsDrawerLabel">Channels</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+              <div class="mb-2">
+                <a id="drawer-create-channel" href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                  data-bs-target="#create-channel-container">+ Create channel</a>
+              </div>
+              <div id="drawer-channel-list" class="list-group small" style="gap:.25rem"></div>
+            </div>
+            <hr class="my-3">
+            <div class="d-flex gap-2">
+              <button class="btn btn-outline-secondary flex-fill" id="drawer-profile">My profile</button>
+              <button class="btn btn-outline-danger flex-fill" id="drawer-logout">Logout</button>
+            </div> 
+          </div>
+
+          <!-- Main content -->
+          <main id="app" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+              <h1 class="h4 m-0">Home</h1>
+            </div>
+
+            <!-- channel details -->
+            <div id="channel-details-container"></div>
+
+            <!-- channel main: scrollable messages + sticky composer -->
+            <div id="channel-main">
+              <div id="message-scroll">
+                <div id="message-top-loader" class="small text-muted text-center">Loading older messages…</div>
+                <div id="message-list"></div>
+              </div>
+
+              <!-- composer -->
+              <form id="message-composer" class="d-flex gap-2">
+                <input id="message-input" class="form-control" type="text" placeholder="Write a message…"
+                  autocomplete="off" />
+                <!-- send photo -->
+                <input id="composer-image" type="file" accept="image/*" class="d-none">
+                <button id="composer-image-btn" type="button" class="btn btn-outline-secondary btn-sm">📷 Image</button>
+                <button id="message-send-button" type="submit" class="btn btn-primary">Send</button>
+              </form>
+            </div>
+
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Channel Modal -->
+    <div class="modal fade" id="create-channel-container" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <form class="modal-content" id="create-channel-form">
+          <div class="modal-header">
+            <h5 class="modal-title">Create a new channel</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+              id="create-channel-close"></button>
+          </div>
+
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="create-channel-name" class="form-label">Name *</label>
+              <input id="create-channel-name" type="text" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="create-channel-description" class="form-label">Description (optional)</label>
+              <textarea id="create-channel-description" class="form-control" rows="3" placeholder="Optional"></textarea>
+            </div>
+            <div class="form-check">
+              <input id="create-channel-is-private" class="form-check-input" type="checkbox">
+              <label class="form-check-label" for="create-channel-is-private">Private channel</label>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button id="create-channel-submit" type="submit" class="btn btn-primary">Create</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Pinned Messages Modal -->
+    <div class="modal fade" id="pinnedModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Pinned messages</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div id="pinned-list" class="list-group small"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- channel invite Modal -->
+    <div id="channel-invite-container" class="position-fixed top-0 start-0 w-100 h-100 d-none"
+      style="background: rgba(0,0,0,.35); z-index: 1050;">
+      <div class="bg-white rounded-3 shadow p-3 p-sm-4 position-absolute start-50 top-50 translate-middle"
+        style="width: min(92vw, 520px); max-height: 80vh; overflow: auto;">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <h5 class="mb-0">Invite members</h5>
+          <button id="invite-cancel-button" class="btn btn-sm btn-outline-secondary" type="button">Close</button>
+        </div>
+
+        <!-- choosed users -->
+        <div class="mb-2 small text-muted">Selected:</div>
+        <div id="invite-selected" class="mb-3"></div>
+
+        <!-- users those can invite -->
+        <div class="mb-2 small text-muted">Users not in this channel:</div>
+        <input id="invite-search" type="text" class="form-control mb-2" placeholder="Search users by name or email...">
+        <div id="invite-list" class="list-group" style="gap:.25rem"></div>
+
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button id="invite-submit-button" type="button" class="btn btn-primary">
+            Invite
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profile-container" class="profile-modal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="profile-backdrop" data-close="1"></div>
+      <div class="profile-dialog" role="document">
+        <button type="button" id="profile-close" class="profile-close" aria-label="Close">×</button>
+
+        <div class="profile-body">
+          <img id="profile-image" alt="avatar" width="96" height="96" class="profile-avatar">
+          <h5 id="profile-name" class="profile-name">User</h5>
+          <div id="profile-email" class="profile-email"></div>
+          <p id="profile-bio" class="profile-bio">—</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Own Profile Modal -->
+    <div id="own-profile-container" class="profile-modal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="profile-backdrop" data-close="1"></div>
+      <div class="profile-dialog" role="document">
+        <button type="button" id="own-profile-close" class="profile-close" aria-label="Close">×</button>
+
+        <div class="profile-body" style="width:100%;align-items:stretch;text-align:left;">
+          <h5 class="mb-3">Your profile</h5>
+          <form id="own-profile-form" class="d-grid gap-2">
+            <div class="d-flex align-items-center gap-3">
+              <img id="own-profile-image" width="96" height="96" class="profile-avatar" alt="avatar">
+              <div>
+                <input type="file" id="own-profile-photo" accept="image/*" class="form-control form-control-sm">
+                <div class="form-text">Upload a new profile photo</div>
+              </div>
+            </div>
+
+            <div class="form-floating">
+              <input id="own-profile-name" class="form-control" type="text" placeholder="Name">
+              <label for="own-profile-name">Name</label>
+            </div>
+
+            <div class="form-floating">
+              <input id="own-profile-email" class="form-control" type="email" placeholder="Email" disabled>
+              <label for="own-profile-email">Email</label>
+            </div>
+
+            <div class="form-floating">
+              <textarea id="own-profile-bio" class="form-control" placeholder="Bio" style="height:100px"></textarea>
+              <label for="own-profile-bio">Bio</label>
+            </div>
+
+            <div>
+              <label class="form-label mb-1">New password</label>
+              <div class="input-group">
+                <input id="own-profile-password" type="password" class="form-control" autocomplete="new-password"
+                  minlength="6">
+                <button type="button" class="btn btn-outline-secondary" id="own-profile-toggle">Show</button>
+              </div>
+              <div class="form-text">Leave empty to keep current password.</div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+              <button type="button" id="own-profile-save" class="btn btn-primary">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Viewer Modal -->
+    <div id="image-modal" class="profile-modal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="profile-backdrop" data-close="1"></div>
+      <div class="profile-dialog" role="document" style="padding:0; overflow:hidden;">
+        <button type="button" id="image-modal-close" class="profile-close" aria-label="Close">×</button>
+        <div id="image-modal-body" style="position:relative; background:#000;">
+          <img id="image-modal-img" alt="image" style="display:block; max-width:90vw; max-height:80vh; margin:0 auto;">
+          <!-- arrows -->
+          <button id="image-prev" class="image-arrow" type="button" aria-label="Previous">‹</button>
+          <button id="image-next" class="image-arrow" type="button" aria-label="Next">›</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Channel Modal -->
+    <div class="modal fade" id="editChannelModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit channel</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="edit-channel-name" class="form-label">Name *</label>
+              <input id="edit-channel-name" type="text" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="edit-channel-description" class="form-label">Description</label>
+              <textarea id="edit-channel-description" class="form-control" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button id="edit-channel-save" type="button" class="btn btn-primary">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="src/main.js"></script>
+
+</body>
+
+</html>
