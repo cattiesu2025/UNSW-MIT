@@ -1,2 +1,20 @@
 node_modules/
 .DS_Store
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Secrets & API keys
+*.env
+
+# Runtime-generated databases
+*.sqlite
+
+# Large dataset files (download separately)
+listings.csv
+reviews.csv
