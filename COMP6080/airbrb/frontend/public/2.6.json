@@ -1,0 +1,24 @@
+{
+    "title": "2.6 Sample Listing",
+    "price": 120,
+    "thumbnail": "https://picsum.photos/800/600?random=1",
+    "address": {
+      "street": "1 High St",
+      "city": "Kensington",
+      "state": "NSW",
+      "postcode": "2052"
+    },
+    "metadata": {
+      "propertyType": "apartment",
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "beds": 2,
+      "amenities": ["Wifi", "Kitchen"],
+      "youtubeUrl": "",
+      "images": [
+        "https://picsum.photos/800/600?random=2",
+        "https://picsum.photos/800/600?random=3"
+      ]
+    }
+  }
+  
